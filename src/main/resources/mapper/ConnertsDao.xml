@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huawei.it.imoc.db.dao.ConnertsDao">
+    <resultMap type="com.huawei.it.imoc.common.domain.ChangeShiftsInfo" id="BaseResultMap">
+        <result column="id" property="id" />
+        <result column="change_user_id" property="changeUserId"  />
+        <result column="be_change_user_id" property="beChangeUserId"  />
+        <result column="change_message" property="changeMessage"  />
+        <result column="change_state" property="changeState"  />
+        <result column="change_time" property="changeTime"  />
+        <result column="creat_date" property="createDate"  />
+        <result column="last_update_time" property="lastUpdateTime"  />
+    </resultMap>
+
+
+
+    <insert id="addConnert" useGeneratedKeys="true" keyProperty="id" parameterType="com.huawei.it.imoc.common.domain.ChangeShiftsInfo">
+       insert into change_shifts_info (change_user_id,be_change_user_id,change_message,
+       change_state,change_time,creat_date,last_update_time)
+       values (
+       #{changeUserId}, #{beChangeUserId}, #{changeMessage},
+       #{changeState}, #{changeTime},now(),now()
+       )
+
+   </insert>
+    <select id="getConnert" parameterType="com.huawei.it.imoc.common.domain.ChangeShiftsInfo" resultMap="BaseResultMap">
+        select * from `change_shifts_info`
+        <where>
+            1=1
+            <if test = "changeUserId!=null">
+                and `change_user_id` like concat('%',#{changeUserId},'%')
+            </if>
+            <if test = "beChangeUserId !=null">
+                and be_change_user_id like concat('%',#{beChangeUserId},'%')
+            </if>
+            <if test = "changeTime!=null">
+                and change_time like concat('%',#{changeTime},'%')
+            </if>
+            <if test = "changeState!=null">
+                and `change_state` like concat('%',#{changeState},'%')
+            </if>
+                and delete_id=0
+        </where>
+    </select>
+
+    <select id="getAll" resultMap="BaseResultMap">
+            SELECT * from `change_shifts_info` where delete_id=0
+     </select>
+
+    <select id="getOne" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+            SELECT * from `change_shifts_info` where id = #{id}
+     </select>
+
+    <update id="delete" parameterType="java.lang.Integer">
+       update`change_shifts_info` set delete_id=1,delete_time=now() where id=#{id}
+     </update>
+
+    <update id="update" parameterType="com.huawei.it.imoc.common.domain.ChangeShiftsInfo">
+        update `change_shifts_info` set change_user_id = #{changeUserId}, be_change_user_id =  #{beChangeUserId},change_message
+        =  #{changeMessage},change_state = #{changeState},change_time=#{changeTime} ,last_update_time = now() where id = #{id}
+    </update>
+
+</mapper>
